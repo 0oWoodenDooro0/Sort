@@ -5,7 +5,7 @@ import pygame
 
 
 def update(l: list):
-    screen.fill((255, 255, 255))
+    screen.fill((0, 0, 0))
     for i, item in enumerate(l):
         if item < 256:
             color = pygame.Color(255, item, 0)
@@ -21,7 +21,7 @@ def update(l: list):
             color = pygame.Color(255, 0, 1535 - item)
         else:
             color = pygame.Color(0, 0, 0)
-        pygame.draw.rect(screen, color, pygame.Rect(i * 0.5, HEIGHT - item * 0.5, 1, item * 0.5))
+        pygame.draw.rect(screen, color, pygame.Rect(i * 0.5, HEIGHT - item * 0.5, 1, 1))
     pygame.display.update()
 
 
@@ -96,6 +96,24 @@ def cocktail_shaker_sort(target: list):
     return target
 
 
+def double_selection_sort(target: list):
+    for i in range(len(target) // 2):
+        minimum_index = i
+        maximum_index = i
+        for j in range(i, len(target) - i):
+            minimum_index = target.index(min(target[minimum_index], target[j]))
+            maximum_index = target.index(max(target[maximum_index], target[j]))
+        if target[minimum_index] != target[i]:
+            target[minimum_index], target[i] = target[i], target[minimum_index]
+            update(target)
+        if maximum_index == i:
+            maximum_index = minimum_index
+        if target[maximum_index] != target[len(target) - i - 1]:
+            target[maximum_index], target[len(target) - i - 1] = target[len(target) - i - 1], target[maximum_index]
+            update(target)
+    return target
+
+
 def merge_sort_in_place(target: list):
     def divide(l: list, left, right):
         if right <= left:
@@ -120,22 +138,24 @@ def merge_sort_in_place(target: list):
 
 
 def merge_sort_out_of_place(target: list):
-    def divide(l: list):
+    def divide(l: list, left_temp=[], right_temp=[]):
         if len(l) <= 1:
             return l
         mid = len(l) // 2
         left = l[:mid]
         right = l[mid:]
-        left = divide(left)
-        right = divide(right)
-        return merge(left, right)
+        left = divide(left, left_temp=left_temp, right_temp=right + right_temp)
+        right = divide(right, left_temp=left_temp + left, right_temp=right_temp)
+        result = merge(left, right, left_temp, right_temp)
+        return result
 
-    def merge(left: list, right: list):
+    def merge(left: list, right: list, left_temp, right_temp):
         result = []
         while len(left) > 0 and len(right) > 0:
             if left[0] > right[0]:
                 result.append(right[0])
                 right.remove(right[0])
+                update(left_temp + result + left + right + right_temp)
             else:
                 result.append(left[0])
                 left.remove(left[0])
@@ -152,22 +172,27 @@ pygame.init()
 WIDTH = 768
 HEIGHT = 768
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-l = list(range(1, 1536))
-update(l)
-time.sleep(1)
-shuffle(l)
-selection_sort(l)
-shuffle(l)
-bubble_sort(l)
-shuffle(l)
-insertion_sort(l)
-shuffle(l)
-cocktail_shaker_sort(l)
-shuffle(l)
-merge_sort_in_place(l)
-done = False
-while not done:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-pygame.quit()
+if __name__ == "__main__":
+    l = list(range(1, 1537))
+    update(l)
+    time.sleep(1)
+    shuffle(l)
+    selection_sort(l)
+    shuffle(l)
+    bubble_sort(l)
+    shuffle(l)
+    insertion_sort(l)
+    shuffle(l)
+    cocktail_shaker_sort(l)
+    shuffle(l)
+    double_selection_sort(l)
+    shuffle(l)
+    merge_sort_in_place(l)
+    shuffle(l)
+    merge_sort_out_of_place(l)
+    done = False
+    while not done:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+    pygame.quit()
