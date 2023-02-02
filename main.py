@@ -7,7 +7,21 @@ import pygame
 def update(l: list):
     screen.fill((255, 255, 255))
     for i, item in enumerate(l):
-        pygame.draw.rect(screen, (0, 0, 0), (i * 1.5, HEIGHT - item, 1, item))
+        if item < 256:
+            color = pygame.Color(255, item, 0)
+        elif item < 512:
+            color = pygame.Color(511 - item, 255, 0)
+        elif item < 768:
+            color = pygame.Color(0, 255, item - 512)
+        elif item < 1024:
+            color = pygame.Color(0, 1023 - item, 255)
+        elif item < 1280:
+            color = pygame.Color(item - 1024, 0, 255)
+        elif item < 1536:
+            color = pygame.Color(255, 0, 1535 - item)
+        else:
+            color = pygame.Color(0, 0, 0)
+        pygame.draw.rect(screen, color, pygame.Rect(i * 0.5, HEIGHT - item * 0.5, 1, item * 0.5))
     pygame.display.update()
 
 
@@ -40,6 +54,7 @@ def bubble_sort(target: list):
                 if j % 50 == 0:
                     update(target)
                 exchange = True
+        update(target)
         if not exchange:
             break
     return target
@@ -68,6 +83,7 @@ def cocktail_shaker_sort(target: list):
                 if i % 25 == 0:
                     update(target)
                 exchange = True
+        update(target)
         right -= 1
         for i in range(right, left, -1):
             if target[i] < target[i - 1]:
@@ -75,6 +91,7 @@ def cocktail_shaker_sort(target: list):
                 if i + 12 % 25 == 0:
                     update(target)
                 exchange = True
+        update(target)
         left += 1
     return target
 
@@ -132,12 +149,12 @@ def merge_sort_out_of_place(target: list):
 
 
 pygame.init()
-WIDTH = 1500
-HEIGHT = 1000
+WIDTH = 768
+HEIGHT = 768
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-clock = pygame.time.Clock()
-l = list(range(1, 1001))
-time.sleep(5)
+l = list(range(1, 1536))
+update(l)
+time.sleep(1)
 shuffle(l)
 selection_sort(l)
 shuffle(l)
