@@ -7,7 +7,8 @@ def shuffle(target: list):
     l = target[:]
     for i in range(len(target)):
         value = random.choice(l)
-        target[i], target[target.index(value)] = value, target[i]
+        index = target.index(value)
+        target[i], target[index] = value, target[i]
         l.remove(value)
         update(target)
     return target
