@@ -253,12 +253,12 @@ def gravity_sort(target: list):
     if count != 0:
         result[result_index] = count
 
-    for i in range(max(target)):
-        for j in range(len(target)):
-            if target[j] < result[j]:
-                target[j] += 1
-            elif target[j] > result[j]:
+    for i in range(len(target) - 1, -1, -1):
+        for j in range(len(target) - 1, -1, -1):
+            if result[i] < target[j] and i > j:
                 target[j] -= 1
+            elif target[j] < result[j] and i < j:
+                target[j] += 1
         update(target)
 
     return target
