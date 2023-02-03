@@ -204,3 +204,26 @@ def quick_sort(target: list):
         divide(l, i + 1, right)
 
     return divide(target, 0, len(target) - 1)
+
+
+def max_heap_sort(target: list):
+    def heapify(l: list, index, end):
+        parent = index
+        children = 2 * parent + 1
+        if children > end:
+            return
+        heapify(l, children, end)
+        heapify(l, children + 1, end)
+        if children + 1 <= end and l[children + 1] > l[children]:
+            children += 1
+        if l[children] > l[parent]:
+            swap(l, parent, children)
+            update(l)
+
+    end = len(target) - 1
+    while end != 0:
+        heapify(target, 0, end)
+        swap(target, 0, end)
+        update(target)
+        end -= 1
+    return target

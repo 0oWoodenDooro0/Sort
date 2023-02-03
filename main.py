@@ -12,6 +12,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 def update(l: list):
     screen.fill((0, 0, 0))
+    last = 0
     for i, item in enumerate(l):
         if item < 256:
             color = pygame.Color(255, item, 0)
@@ -27,7 +28,10 @@ def update(l: list):
             color = pygame.Color(255, 0, 1535 - item)
         else:
             color = pygame.Color(0, 0, 0)
-        pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - item * 0.5, 1, item * 0.5))
+        # pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - item * 0.5, 1, item * 0.5))
+        # pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - item * 0.5, 1, 1))
+        pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - max(last, item) * 0.5, 1, max(2, abs(last - item)) * 0.5))
+        last = item
     pygame.display.update()
 
 
@@ -36,7 +40,7 @@ if __name__ == '__main__':
     update(l)
     time.sleep(1)
     shuffle(l)
-    quick_sort(l)
+    max_heap_sort(l)
     done = False
     while not done:
         for event in pygame.event.get():
