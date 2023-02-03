@@ -28,19 +28,20 @@ def update(l: list):
             color = pygame.Color(255, 0, 1535 - item)
         else:
             color = pygame.Color(0, 0, 0)
-        # pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - item * 0.5, 1, item * 0.5))
+        pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - item * 0.5, 1, item * 0.5))
         # pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - item * 0.5, 1, 1))
-        pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - max(last, item) * 0.5, 1, max(2, abs(last - item)) * 0.5))
+        # pygame.draw.rect(screen, color, pygame.Rect(i, HEIGHT - max(last, item) * 0.5, 1, max(2, abs(last - item)) * 0.5))
+        # pygame.draw.rect(screen, color, pygame.Rect(i, 0, 1, HEIGHT ))
         last = item
     pygame.display.update()
 
 
 if __name__ == '__main__':
-    l = list(range(1, 1537))
+    l = list(range(1, 1536))
     update(l)
     time.sleep(1)
     shuffle(l)
-    max_heap_sort(l)
+    gravity_sort(l)
     done = False
     while not done:
         for event in pygame.event.get():

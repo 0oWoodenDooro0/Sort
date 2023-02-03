@@ -227,3 +227,38 @@ def max_heap_sort(target: list):
         update(target)
         end -= 1
     return target
+
+
+def gravity_sort(target: list):
+    index = 0
+    count = 0
+    breads = target[:]
+    result_index = len(target) - 1
+    result = target[:]
+
+    while any(breads):
+        if breads[index] != 0:
+            count += 1
+            breads[index] -= 1
+
+        if index == len(target) - 1:
+            result[result_index] = count
+            result_index -= 1
+            update(target)
+            index = 0
+            count = 0
+        else:
+            index += 1
+
+    if count != 0:
+        result[result_index] = count
+
+    for i in range(max(target)):
+        for j in range(len(target)):
+            if target[j] < result[j]:
+                target[j] += 1
+            elif target[j] > result[j]:
+                target[j] -= 1
+        update(target)
+
+    return target
