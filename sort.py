@@ -14,12 +14,16 @@ def shuffle(target: list):
     return target
 
 
+def swap(l: list, index1, index2):
+    l[index1], l[index2] = l[index2], l[index1]
+
+
 def selection_sort(target: list):
     for i in range(len(target)):
         minimum_index = i
         for j in range(i, len(target)):
             minimum_index = target.index(min(target[minimum_index], target[j]))
-        target[minimum_index], target[i] = target[i], target[minimum_index]
+        swap(target, minimum_index, i)
         update(target)
     return target
 
@@ -29,7 +33,7 @@ def bubble_sort(target: list):
         exchange = False
         for j in range(len(target) - 1 - i):
             if target[j] > target[j + 1]:
-                target[j], target[j + 1] = target[j + 1], target[j]
+                swap(target, j, j + 1)
                 if j % 50 == 0:
                     update(target)
                 exchange = True
@@ -58,7 +62,7 @@ def cocktail_shaker_sort(target: list):
         exchange = False
         for i in range(left, right):
             if target[i] > target[i + 1]:
-                target[i], target[i + 1] = target[i + 1], target[i]
+                swap(target, i, i + 1)
                 if i % 25 == 0:
                     update(target)
                 exchange = True
@@ -66,7 +70,7 @@ def cocktail_shaker_sort(target: list):
         right -= 1
         for i in range(right, left, -1):
             if target[i] < target[i - 1]:
-                target[i], target[i - 1] = target[i - 1], target[i]
+                swap(target, i, i - 1)
                 if i + 12 % 25 == 0:
                     update(target)
                 exchange = True
@@ -83,12 +87,12 @@ def double_selection_sort(target: list):
             minimum_index = target.index(min(target[minimum_index], target[j]))
             maximum_index = target.index(max(target[maximum_index], target[j]))
         if target[minimum_index] != target[i]:
-            target[minimum_index], target[i] = target[i], target[minimum_index]
+            swap(target, minimum_index, i)
             update(target)
         if maximum_index == i:
             maximum_index = minimum_index
         if target[maximum_index] != target[len(target) - i - 1]:
-            target[maximum_index], target[len(target) - i - 1] = target[len(target) - i - 1], target[maximum_index]
+            swap(target, maximum_index, len(target) - i - 1)
             update(target)
     return target
 
@@ -143,5 +147,38 @@ def merge_sort_out_of_place(target: list):
         if len(right) > 0:
             result.extend(right)
         return result
+
+    return divide(target)
+
+
+def weave_merge_sort(target: list):
+    def divide(l: list, left_temp=[], right_temp=[]):
+        if len(l) <= 1:
+            return l
+        mid = len(l) // 2
+        left = l[:mid]
+        right = l[mid:]
+        left = divide(left, left_temp=left_temp, right_temp=right + right_temp)
+        right = divide(right, left_temp=left_temp + left, right_temp=right_temp)
+        result = merge(left + right, left_temp, right_temp)
+        return result
+
+    def merge(l: list, left_temp, right_temp):
+        mid = len(l) // 2
+        print(l)
+        for i in range(mid - 1):
+            print(l[mid + i], l[i * 2 + 1:mid + 1], l[mid + i - 1], [l[mid + i]] + l[i * 2: mid - 1])
+            l[i * 2], l[i * 2 + 1:mid + 1] = l[mid + i], l[i * 2: mid]
+            print(l)
+            update(left_temp + l + right_temp)
+        for i in range(1, len(l)):
+            k = l[i]
+            j = i - 1
+            while j >= 0 and target[j] > k:
+                j -= 1
+            l.remove(k)
+            l.insert(j + 1, k)
+            update(left_temp + l + right_temp)
+        return l
 
     return divide(target)

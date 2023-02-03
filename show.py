@@ -29,9 +29,10 @@ WIDTH = 768
 HEIGHT = 768
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 if __name__ == "__main__":
-    l = list(range(1, 10))
+    l = list(range(10))
     shuffle(l)
     time.sleep(1)
+    weave_merge_sort(l)
     done = False
     while not done:
         for event in pygame.event.get():
