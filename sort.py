@@ -1,6 +1,6 @@
 import random
 
-from show import update
+from main import update
 
 
 def shuffle(target: list):
@@ -16,6 +16,12 @@ def shuffle(target: list):
 
 def swap(l: list, index1, index2):
     l[index1], l[index2] = l[index2], l[index1]
+
+
+def move(l: list, move_index, insert_index):
+    value = l[move_index]
+    l.remove(value)
+    l.insert(insert_index, value)
 
 
 def selection_sort(target: list):
@@ -45,12 +51,10 @@ def bubble_sort(target: list):
 
 def insertion_sort(target: list):
     for i in range(1, len(target)):
-        k = target[i]
         j = i - 1
-        while j >= 0 and target[j] > k:
+        while j >= 0 and target[j] > target[i]:
             j -= 1
-        target.remove(k)
-        target.insert(j + 1, k)
+        move(target, i, j + 1)
         update(target)
     return target
 
@@ -110,8 +114,8 @@ def merge_sort_in_place(target: list):
         mid += 1
         while left <= mid <= right:
             if l[left] > l[mid]:
-                l[left:mid + 1] = [l[mid]] + l[left:mid]
-                update(l)
+                move(l, mid, left)
+                update()
                 mid += 1
             else:
                 left += 1
@@ -165,20 +169,38 @@ def weave_merge_sort(target: list):
 
     def merge(l: list, left_temp, right_temp):
         mid = len(l) // 2
-        print(l)
-        for i in range(mid - 1):
-            print(l[mid + i], l[i * 2 + 1:mid + 1], l[mid + i - 1], [l[mid + i]] + l[i * 2: mid - 1])
-            l[i * 2], l[i * 2 + 1:mid + 1] = l[mid + i], l[i * 2: mid]
-            print(l)
+        for i in range(mid):
+            move(l, mid + i, i * 2)
             update(left_temp + l + right_temp)
         for i in range(1, len(l)):
-            k = l[i]
             j = i - 1
-            while j >= 0 and target[j] > k:
+            while j >= 0 and l[j] > l[i]:
                 j -= 1
-            l.remove(k)
-            l.insert(j + 1, k)
+            move(l, i, j + 1)
             update(left_temp + l + right_temp)
         return l
 
     return divide(target)
+
+
+def quick_sort(target: list):
+    def divide(l: list, left, right):
+        if left >= right:
+            return
+        key = l[left]
+        i = left
+        j = right
+        while i != j:
+            while l[j] > key and i < j:
+                j -= 1
+            while l[i] <= key and i < j:
+                i += 1
+            if i < j:
+                swap(l, i, j)
+                update(l)
+        swap(l, left, i)
+        update(l)
+        divide(l, left, i - 1)
+        divide(l, i + 1, right)
+
+    return divide(target, 0, len(target) - 1)
