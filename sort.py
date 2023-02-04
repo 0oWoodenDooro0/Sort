@@ -1,4 +1,5 @@
 import random
+import time
 
 from main import update
 
@@ -262,3 +263,43 @@ def gravity_sort(target: list):
         update(target)
 
     return target
+
+
+def counting_sort(target: list):
+    count = [0] * (max(target) + 1)
+    for i in range(len(target)):
+        count[target[i]] += 1
+
+    index = 0
+    for i in range(len(target)):
+        if count[index] == 0:
+            index += 1
+        if count[index] != 0:
+            target[i] = index
+            update(target)
+            count[index] -= 1
+
+
+def radix_lsd_sort(target: list, base: int):
+    maximum_index = max(target)
+    radix = base
+    while maximum_index * base // radix != 0:
+        bucket = [list() for _ in range(base)]
+        for i in range(len(target)):
+            bucket[target[i] % radix // (radix // base)].append(target[i])
+        index = 0
+        result = target[:]
+        for i in range(len(target)):
+            while not any(bucket[index]):
+                if index == base:
+                    break
+                index += 1
+            result[i] = bucket[index].pop(0)
+        row = len(result) // base + 1
+        for i in range(row):
+            for j in range(base):
+                if j * row + i >= len(result):
+                    break
+                target[j * row + i] = result[j * row + i]
+            update(target)
+        radix *= base
