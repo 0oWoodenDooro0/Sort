@@ -256,9 +256,9 @@ def gravity_sort(target: list):
 
     for i in range(len(target) - 1, -1, -1):
         for j in range(len(target) - 1, -1, -1):
-            if result[i] < target[j] and i > j:
+            if result[i] <= target[j] and i > j:
                 target[j] -= 1
-            elif target[j] < result[j] and i < j:
+            elif result[j] > target[j]:
                 target[j] += 1
         update(target)
 
@@ -272,7 +272,7 @@ def counting_sort(target: list):
 
     index = 0
     for i in range(len(target)):
-        if count[index] == 0:
+        while count[index] == 0:
             index += 1
         if count[index] != 0:
             target[i] = index
@@ -302,4 +302,30 @@ def radix_lsd_sort(target: list, base: int):
                     break
                 target[j * row + i] = result[j * row + i]
             update(target)
+        radix *= base
+
+
+def radix_lsd_in_place_sort(target: list, base: int):
+    maximum_index = max(target)
+    radix = base
+    while maximum_index * base // radix != 0:
+        bucket = [list() for _ in range(base)]
+        for i in range(len(target)):
+            bucket[target[i] % radix // (radix // base)].append(target[i])
+        index = 0
+        result = target[:]
+        for i in range(len(target)):
+            while not any(bucket[index]):
+                if index == base:
+                    break
+                index += 1
+            result[i] = bucket[index].pop(0)
+        row = len(result) // base + 1
+        for i in range(row):
+            for j in range(base):
+                if j * row + i >= len(result):
+                    break
+                target.pop()
+                target.insert(i * j + i + j, result[j * row + i])
+                update(target)
         radix *= base
