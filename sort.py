@@ -1,3 +1,4 @@
+import math
 import random
 import time
 
@@ -23,6 +24,10 @@ def move(l: list, move_index, insert_index):
     value = l[move_index]
     l.remove(value)
     l.insert(insert_index, value)
+
+
+def reverse(l: list, start, end):
+    l[start:end + 1] = l[end: start - 1:-1]
 
 
 def selection_sort(target: list):
@@ -291,8 +296,6 @@ def radix_lsd_sort(target: list, base: int):
         result = target[:]
         for i in range(len(target)):
             while not any(bucket[index]):
-                if index == base:
-                    break
                 index += 1
             result[i] = bucket[index].pop(0)
         row = len(result) // base + 1
@@ -302,30 +305,35 @@ def radix_lsd_sort(target: list, base: int):
                     break
                 target[j * row + i] = result[j * row + i]
             update(target)
+        time.sleep(0.5)
         radix *= base
 
 
 def radix_lsd_in_place_sort(target: list, base: int):
-    maximum_index = max(target)
-    radix = base
-    while maximum_index * base // radix != 0:
-        bucket = [list() for _ in range(base)]
-        for i in range(len(target)):
-            bucket[target[i] % radix // (radix // base)].append(target[i])
-        index = 0
-        result = target[:]
-        for i in range(len(target)):
-            while not any(bucket[index]):
-                if index == base:
+    d = int(math.log(max(target), base)) + 1
+    for i in range(1, d + 1):
+        radix = base ** i
+        bucket = [0]
+        for _ in range(radix - 1):
+            bucket.append(len(target) - 1)
+        p = 0
+        for index in range(len(target)):
+            remain = target[index - p] % radix
+            if remain != 0:
+                if index - p == bucket[remain]:
                     break
-                index += 1
-            result[i] = bucket[index].pop(0)
-        row = len(result) // base + 1
-        for i in range(row):
-            for j in range(base):
-                if j * row + i >= len(result):
-                    break
-                target.pop()
-                target.insert(i * j + i + j, result[j * row + i])
+                move(target, index - p, bucket[remain])
                 update(target)
-        radix *= base
+                p += 1
+            if remain == 0:
+                for j in range(radix):
+                    if j == 0:
+                        bucket[0] += 1
+                    elif bucket[j] < bucket[0]:
+                        bucket[j] += 1
+            else:
+                for j in range(remain - 1, 0, -1):
+                    if bucket[j] == bucket[0]:
+                        continue
+                    bucket[j] -= 1
+    return target
