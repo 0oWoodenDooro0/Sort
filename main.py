@@ -41,7 +41,7 @@ if __name__ == '__main__':
     update(l)
     time.sleep(1)
     shuffle(l)
-    radix_lsd_in_place_sort(l, 10)
+    radix_lsd_in_place_sort(l, 2)
     done = False
     while not done:
         for event in pygame.event.get():
