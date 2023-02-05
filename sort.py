@@ -1,5 +1,6 @@
 import math
 import random
+import time
 
 from main import update
 
@@ -304,6 +305,7 @@ def radix_lsd_sort(target: list, base: int):
                     break
                 target[j * row + i] = result[j * row + i]
             update(target)
+        time.sleep(0.2)
 
 
 def radix_lsd_in_place_sort(target: list, base: int):
@@ -333,6 +335,7 @@ def radix_lsd_in_place_sort(target: list, base: int):
                     if bucket[j] == bucket[0]:
                         continue
                     bucket[j] -= 1
+        time.sleep(0.2)
     return target
 
 
@@ -357,6 +360,7 @@ def radix_msd_sort(target: list, base: int):
                     break
                 target[j * row + i] = result[j * row + i]
             update(target)
+        time.sleep(0.2)
         return msd(arr, d - 1, base)
 
     d = int(math.log(max(target), base)) + 1
