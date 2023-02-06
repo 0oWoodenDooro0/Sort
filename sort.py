@@ -340,28 +340,27 @@ def radix_lsd_in_place_sort(target: list, base: int):
 
 
 def radix_msd_sort(target: list, base: int):
-    def msd(l: list, d: int, base: int):
+    def msd(l: list, d: int, base: int, left_temp=[], right_temp=[]):
+        if len(l) <= 1:
+            return l
         if d < 0:
-            return [num for sublist in l for num in sublist]
-        arr = []
-        for index in range(len(l)):
-            if len(l[index]) < 1:
-                break
-            radix = base ** d
-            bucket = [list() for _ in range(base)]
-            for i in range(len(l[index])):
-                bucket[(l[index][i] // radix) % base].append(l[index][i])
-            arr += [b for b in bucket if b]
-        result = [num for sublist in arr for num in sublist]
-        row = len(result) // base + 1
-        for i in range(row):
-            for j in range(base):
-                if j * row + i >= len(result):
-                    break
-                target[j * row + i] = result[j * row + i]
-            update(target)
-        time.sleep(0.2)
-        return msd(arr, d - 1, base)
+            return [num for num in l]
+        radix = base ** d
+        bucket = [list() for _ in range(base)]
+        for i in range(len(l)):
+            if l[i]:
+                bucket[(l[i] // radix) % base].append(l[i])
+        l = []
+        for i in range(len(bucket)):
+            if bucket[i]:
+                left = left_temp + [num for sublist in bucket[:i] for num in sublist]
+                right = [num for sublist in bucket[i + 1:] for num in sublist] + right_temp
+                for p in range(len(bucket[i])):
+                    target[len(left) + p] = bucket[i][p]
+                    update(target)
+                bucket[i] = msd(bucket[i], d - 1, base, left, right)
+                l += bucket[i]
+        return l
 
     d = int(math.log(max(target), base)) + 1
-    return msd([target], d, base)
+    return msd(target, d, base)
