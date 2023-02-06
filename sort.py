@@ -121,7 +121,7 @@ def merge_sort_in_place(target: list):
         while left <= mid <= right:
             if l[left] > l[mid]:
                 move(l, mid, left)
-                update()
+                update(l)
                 mid += 1
             else:
                 left += 1
