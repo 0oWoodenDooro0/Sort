@@ -340,7 +340,7 @@ def radix_lsd_in_place_sort(target: list, base: int):
 
 
 def radix_msd_sort(target: list, base: int):
-    def msd(l: list, d: int, base: int, left_temp=[], right_temp=[]):
+    def msd(l: list, d: int, base: int, left_temp=0, right_temp=0):
         if len(l) <= 1:
             return l
         if d < 0:
@@ -350,17 +350,23 @@ def radix_msd_sort(target: list, base: int):
         for i in range(len(l)):
             if l[i]:
                 bucket[(l[i] // radix) % base].append(l[i])
-        l = []
+        l = [num for sublist in bucket for num in sublist]
+        times = 0
+        for i in range(len(l) - 1, -1, -1):
+            target[left_temp + i] = l[i]
+            times += 1
+            if times % 4 == 0:
+                update(target)
+                times = 0
         for i in range(len(bucket)):
             if bucket[i]:
-                left = left_temp + [num for sublist in bucket[:i] for num in sublist]
-                right = [num for sublist in bucket[i + 1:] for num in sublist] + right_temp
-                for p in range(len(bucket[i])):
-                    target[len(left) + p] = bucket[i][p]
-                    update(target)
+                left = left_temp + len([num for sublist in bucket[:i] for num in sublist])
+                right = len([num for sublist in bucket[i + 1:] for num in sublist]) + right_temp
                 bucket[i] = msd(bucket[i], d - 1, base, left, right)
-                l += bucket[i]
+        l = [num for sublist in bucket for num in sublist]
         return l
 
     d = int(math.log(max(target), base)) + 1
-    return msd(target, d, base)
+    arr = msd(target, d, base)
+    update(arr)
+    return arr
